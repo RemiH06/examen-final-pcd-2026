@@ -1,0 +1,31 @@
+{
+  "modelo": "workspace.default.pcd_2026_examen_sms_remih06",
+  "version": "1",
+  "todas_coinciden": true,
+  "casos": [
+    {
+      "texto": "Can we meet after class to review the project notes?",
+      "modelo": "ham",
+      "api": "ham",
+      "http": 200,
+      "version_api": "1",
+      "coinciden": true
+    },
+    {
+      "texto": "URGENT! You have won a 500 cash prize. Text WIN to 80888 now to claim, T&Cs apply.",
+      "modelo": "spam",
+      "api": "spam",
+      "http": 200,
+      "version_api": "1",
+      "coinciden": true
+    },
+    {
+      "texto": "Your package is waiting, reply to confirm the delivery time for tomorrow.",
+      "modelo": "spam",
+      "api": "spam",
+      "http": 200,
+      "version_api": "1",
+      "coinciden": true
+    }
+  ]
+}
