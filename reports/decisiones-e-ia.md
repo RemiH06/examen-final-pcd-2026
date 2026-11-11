@@ -61,6 +61,19 @@ Bitácora del examen final (Nimbo SMS). Cada decisión indica alternativas, raz�
 - **Puertos:** 8060 (API) y 8560 (UI), porque 8000 y 8501 ya los usan otros proyectos en mi máquina.
 - **Sin secretos en imágenes:** `.dockerignore` excluye `.env`, `.git/`, `data/` y `artifacts/`; el `.env` llega sólo al contenedor de la API en tiempo de ejecución.
 
+### D10. Imágenes sin caché de uv ni `chown -R`
+
+- **Problema observado:** la primera construcción produjo imágenes de 2.1 GB (API) y 2.0 GB (UI) aunque sus ambientes ocupaban 518 MB y 461 MB. La caché de descargas de uv quedaba dentro de la imagen y `chown -R nimbo /app` copiaba el ambiente completo a una capa nueva.
+- **Decisión:** crear el usuario antes de instalar (`COPY --chown`, `USER nimbo` antes de `uv sync`) y `UV_NO_CACHE=1`.
+- **Validación:** 0.95 GB y 0.88 GB tras reconstruir; dentro de la imagen de la UI `import mlflow` falla, lo que confirma que sólo trae su grupo (34 paquetes contra 78 de la API).
+
+### D11. Demostración en mi computadora de escritorio por Tailscale, no en AWS
+
+- **Contexto:** Docker Desktop en mi laptop dejó de arrancar (se cayó WSL) el día anterior a la entrega.
+- **Decisión:** construir y correr el mismo `compose.yaml` en mi computadora de escritorio (Docker Engine dentro de WSL, Linux), con puertos sólo en `127.0.0.1` y publicados únicamente en mi red privada de Tailscale (`tailscale serve`), sin abrir puertos del router. Se elimina al terminar el curso.
+- **Alternativas:** EC2 (opcional en el examen, con costo y sin necesidad para sustentar) o reparar Docker Desktop contra reloj.
+- **Validación:** desde la laptop, por la red privada: `/health` 200 con versión 1, los cinco casos 422, la UI responde 200 y `src/paridad.py` contra el contenedor da 3/3.
+
 ## 2. Uso de IA
 
 ### IA-1. Planeación del examen
@@ -79,7 +92,7 @@ Herramienta y para qué la usé: Claude Code, para escribir src/datos.py, src/en
 Prompt que utilicé: "Me parece bien tu flujo, usemos Databricks, creé la carpeta donde haremos todo del examen final, pero no repositorio" y después "listo, prosigamos".
 Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso grupos de dependencias por servicio (D1), deduplicar antes de partir (D3), TF-IDF dentro de un ColumnTransformer (D4) y 20 trials TPE por familia. Acepté. Ante la falla de Prefect propuso fijar fastapi<0.142 (D2). Ante C en el borde, propuso no retunear (D7); lo acepté.
 Cómo lo comprobé, resultado y enlace a evidencia o archivo: corrí `uv sync --locked` y `uv run python src/train_flow.py`; revisé en Databricks las dos versiones y sus aliases; los conteos de reports/datos-resumen.json coinciden con los 5,574 registros del enunciado. Evidencias: reports/evidencias/ (ver índice en el informe).
-PENDIENTE (Remi): agregar aquí una comprobación hecha por mí sin IA, por ejemplo recalcular a mano precision y recall del champion desde su matriz de confusión.
+Pude notar que, en textos cortos, incluso con palabras como "prize" o "reward", marcaba spam aunque fuera la única palabra ahí, cuesta de algunas palabras típicas de ham propias del bag of words (o palabras desconocidas) para que no lo marque como spam, pero invariablemente tiene muchísimo peso en la decisión del modelo.
 ```
 
 ### IA-3. API, interfaz, contenedores y explicación de AWS
@@ -90,6 +103,15 @@ Prompt que utilicé: "Está bien, documentemos y continuemos"
 Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso cargar por número de versión (D8), Pydantic estricto, 503 si no hay modelo, red bridge en vez de host (D9) y t3.small para EC2. Acepté.
 Cómo lo comprobé, resultado y enlace a evidencia o archivo: ejecuté con curl los cinco casos inválidos (422) y el válido (200), y src/paridad.py (3/3 coinciden). Evidencias: reports/evidencias/.
 PENDIENTE (Remi): revisar el tipo real de mi instancia del laboratorio y ajustar la tabla de despliegue-aws.md si es distinto.
+```
+
+### IA-4. Despliegue para la sustentación e informe
+
+```text
+Herramienta y para qué la usé: Claude Code, para desplegar los contenedores en mi computadora de escritorio, corregir el tamaño de las imágenes y armar el informe (src/informe.py y las secciones de examen-final.ipynb) y la sección "Ejecución de mi solución" del README.
+Prompt que utilicé: "a ver mira, quiero terminar esto asap, te parece? Se entrega en algunas horas pero quisiera que quedara corriendo en Pixilate para poder acceder a él desde tailscale para llegar, presentar, explicar y listo. Después de pasar la materia derribaríamos."
+Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso copiar el árbol de trabajo en vez de clonar el repo privado en esa máquina (evita dejar credenciales de GitHub allá), restart: unless-stopped, D10 y D11. Para el análisis de errores propuso que las tablas del informe sólo muestren rasgos numéricos y que yo lea los mensajes con src/ver_errores.py y los parafrasee; lo acepté porque el enunciado prohíbe publicar mensajes y enviarlos a la IA.
+Cómo lo comprobé, resultado y enlace a evidencia o archivo: el notebook se ejecutó completo con kernel nuevo (0 errores); contrato y paridad contra el contenedor (D11). PENDIENTE (Remi): revisar las paráfrasis de la sección 4 del informe.
 ```
 
 ## 3. Límites reconocidos

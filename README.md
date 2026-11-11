@@ -327,3 +327,88 @@ Copiar una conversación sin analizarla sólo acredita la trazabilidad que conte
 - [ ] Verifiqué el contrato, la interfaz y los contenedores; expliqué AWS y cerré recursos utilizados.
 - [ ] El profesor tiene acceso; el PR está Merged y entregado en Canvas antes del límite.
 - [ ] Consulté mi turno y puedo sustentar puntualmente mi trabajo.
+
+---
+
+## Ejecución de mi solución
+
+Informe: [examen-final.ipynb](examen-final.ipynb) · Bitácora: [reports/decisiones-e-ia.md](reports/decisiones-e-ia.md) · Métricas: [reports/metricas.csv](reports/metricas.csv) · AWS: [reports/despliegue-aws.md](reports/despliegue-aws.md) · Evidencias: [reports/evidencias/](reports/evidencias/)
+
+### 1. Requisitos
+
+- [uv](https://docs.astral.sh/uv/) 0.12 o posterior (instala Python 3.12 si hace falta).
+- Docker Engine con Compose v2.
+- Acceso a un workspace de Databricks con Unity Catalog (token personal).
+
+### 2. Ambiente y configuración
+
+```bash
+uv sync --locked                 # crea .venv con Python 3.12 y todos los grupos (train, api, ui, dev)
+cp .env.example .env             # y reemplaza DATABRICKS_HOST y DATABRICKS_TOKEN
+```
+
+`.env` nunca se versiona. `MODEL_NAME` y `MODEL_ALIAS` ya traen los valores del examen.
+
+### 3. Adquisición y entrenamiento (sin Jupyter)
+
+```bash
+uv run prefect server start --host 127.0.0.1 --port 4200   # opcional, en otra terminal: http://127.0.0.1:4200
+uv run python src/train_flow.py
+```
+
+- **Entrada:** el ZIP oficial de UCI, que se descarga a `data/raw/` sólo si no existe.
+- **Salidas:** `data/processed/*.parquet`, `reports/datos-resumen.json`, `reports/metricas.csv`, `artifacts/seleccion.json`, `artifacts/predicciones_test.parquet`, y en Databricks el experimento `/Shared/pcd-2026-examen-sms-remih06` y el modelo `workspace.default.pcd_2026_examen_sms_remih06` con aliases `champion` y `challenger`.
+- **Resultado esperado:** el flujo termina en `Completed()` e imprime el alias, la familia, la versión y el F1 de cada finalista. Sólo la preparación de datos: `uv run python src/datos.py`.
+- **Volver a correrlo** registra dos versiones nuevas y mueve los aliases. Para sólo consultar resultados existentes basta el informe.
+
+### 4. Informe
+
+Abre `examen-final.ipynb` con el kernel del `.venv` (Python 3.12) y ejecuta todo con un kernel nuevo. Sólo lee los resultados guardados y consulta el registro en modo lectura; no repite tuning ni registro. Para leer localmente los errores del champion (no se publican): `uv run python src/ver_errores.py`.
+
+### 5. API y UI
+
+**Con Docker (forma principal):**
+
+```bash
+docker compose build             # sms-api-image:v1 y sms-ui-image:v1
+docker compose up -d
+docker compose ps                # sms-api-container (healthy) y sms-ui-container (Up)
+```
+
+- UI: http://127.0.0.1:8560
+- API: http://127.0.0.1:8060/docs
+
+La API lee `.env` en tiempo de ejecución; la UI sólo recibe `API_URL=http://api:8060`.
+
+**Sin Docker:**
+
+```bash
+uv run uvicorn api.main:app --host 127.0.0.1 --port 8060
+uv run streamlit run ui/app.py --server.port 8560 --server.address 127.0.0.1
+```
+
+### 6. Verificación
+
+```bash
+curl http://127.0.0.1:8060/health
+# 200 {"status":"ok","model_name":"workspace.default.pcd_2026_examen_sms_remih06","model_alias":"champion","model_version":"1"}
+
+curl -X POST http://127.0.0.1:8060/predict -H "Content-Type: application/json" -d '{"text": "Can we meet after class?"}'
+# 200 {"label":"ham","model_name":"...","model_version":"1"}
+
+curl -X POST http://127.0.0.1:8060/predict -H "Content-Type: application/json" -d '{"text": 7}'
+# 422
+
+uv run python src/paridad.py
+# 3 textos inventados: modelo y API coinciden → reports/paridad.json
+```
+
+### 7. Cierre
+
+```bash
+docker compose down              # detiene y elimina contenedores y red
+docker compose ps                # sin servicios
+# Ctrl+C en el servidor de Prefect si lo levantaste
+```
+
+No queda ningún recurso de AWS encendido: el despliegue en EC2 sólo se explica en [reports/despliegue-aws.md](reports/despliegue-aws.md).
