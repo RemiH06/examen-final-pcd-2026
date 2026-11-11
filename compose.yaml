@@ -7,6 +7,7 @@ services:
       dockerfile: api/Dockerfile
     image: sms-api-image:v1
     container_name: sms-api-container
+    restart: unless-stopped
     env_file: .env            # DATABRICKS_HOST, DATABRICKS_TOKEN, MODEL_NAME, MODEL_ALIAS
     ports:
       - "127.0.0.1:8060:8060"
@@ -23,6 +24,7 @@ services:
       dockerfile: ui/Dockerfile
     image: sms-ui-image:v1
     container_name: sms-ui-container
+    restart: unless-stopped
     environment:
       API_URL: http://api:8060
     ports:
