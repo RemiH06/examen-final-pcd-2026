@@ -92,7 +92,7 @@ Herramienta y para qué la usé: Claude Code, para escribir src/datos.py, src/en
 Prompt que utilicé: "Me parece bien tu flujo, usemos Databricks, creé la carpeta donde haremos todo del examen final, pero no repositorio" y después "listo, prosigamos".
 Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso grupos de dependencias por servicio (D1), deduplicar antes de partir (D3), TF-IDF dentro de un ColumnTransformer (D4) y 20 trials TPE por familia. Acepté. Ante la falla de Prefect propuso fijar fastapi<0.142 (D2). Ante C en el borde, propuso no retunear (D7); lo acepté.
 Cómo lo comprobé, resultado y enlace a evidencia o archivo: corrí `uv sync --locked` y `uv run python src/train_flow.py`; revisé en Databricks las dos versiones y sus aliases; los conteos de reports/datos-resumen.json coinciden con los 5,574 registros del enunciado. Evidencias: reports/evidencias/ (ver índice en el informe).
-Pude notar que, en textos cortos, incluso con palabras como "prize" o "reward", marcaba spam aunque fuera la única palabra ahí, cuesta de algunas palabras típicas de ham propias del bag of words (o palabras desconocidas) para que no lo marque como spam, pero invariablemente tiene muchísimo peso en la decisión del modelo.
+Comprobación propia: escribí paráfrasis de los 2 FP y 3 FN del champion y otros textos cortos inventados, y los probé en la UI desplegada. Noté que en textos cortos una sola palabra como "prize" o "reward" basta para que marque spam; hacen falta varias palabras típicas de ham (o desconocidas para el vocabulario) para compensarla. Es una limitación de la bolsa de palabras: esos términos pesan muchísimo en la decisión, y coincide con el patrón de los FP del informe (mensajes legítimos cortos). Evidencia: tabla de paráfrasis y análisis de errores en la sección 4 de examen-final.ipynb
 ```
 
 ### IA-3. API, interfaz, contenedores y explicación de AWS
@@ -102,7 +102,7 @@ Herramienta y para qué la usé: Claude Code, para escribir api/main.py, src/par
 Prompt que utilicé: "Está bien, documentemos y continuemos"
 Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso cargar por número de versión (D8), Pydantic estricto, 503 si no hay modelo, red bridge en vez de host (D9) y t3.small para EC2. Acepté.
 Cómo lo comprobé, resultado y enlace a evidencia o archivo: ejecuté con curl los cinco casos inválidos (422) y el válido (200), y src/paridad.py (3/3 coinciden). Evidencias: reports/evidencias/.
-PENDIENTE (Remi): revisar el tipo real de mi instancia del laboratorio y ajustar la tabla de despliegue-aws.md si es distinto.
+Hospedé todo en Pixilate (mi PC) y accedo por medio de tailscale, se puede pasar a cloudflare (con mi DNS personal) o a AWS de ser necesario en cualquier momento.
 ```
 
 ### IA-4. Despliegue para la sustentación e informe
@@ -111,7 +111,7 @@ PENDIENTE (Remi): revisar el tipo real de mi instancia del laboratorio y ajustar
 Herramienta y para qué la usé: Claude Code, para desplegar los contenedores en mi computadora de escritorio, corregir el tamaño de las imágenes y armar el informe (src/informe.py y las secciones de examen-final.ipynb) y la sección "Ejecución de mi solución" del README.
 Prompt que utilicé: "a ver mira, quiero terminar esto asap, te parece? Se entrega en algunas horas pero quisiera que quedara corriendo en Pixilate para poder acceder a él desde tailscale para llegar, presentar, explicar y listo. Después de pasar la materia derribaríamos."
 Qué propuso y qué acepté, modifiqué o rechacé, con mi razón: propuso copiar el árbol de trabajo en vez de clonar el repo privado en esa máquina (evita dejar credenciales de GitHub allá), restart: unless-stopped, D10 y D11. Para el análisis de errores propuso que las tablas del informe sólo muestren rasgos numéricos y que yo lea los mensajes con src/ver_errores.py y los parafrasee; lo acepté porque el enunciado prohíbe publicar mensajes y enviarlos a la IA.
-Cómo lo comprobé, resultado y enlace a evidencia o archivo: el notebook se ejecutó completo con kernel nuevo (0 errores); contrato y paridad contra el contenedor (D11). PENDIENTE (Remi): revisar las paráfrasis de la sección 4 del informe.
+Cómo lo comprobé, resultado y enlace a evidencia o archivo: el notebook se ejecutó completo con kernel nuevo (0 errores); contrato y paridad contra el contenedor (D11). Revisé y escribí las paráfrasis de la sección 4 leyendo los mensajes localmente.
 ```
 
 ## 3. Límites reconocidos
