@@ -1,0 +1,27 @@
+# Ambiente y cachés
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Secretos (sólo se versiona .env.example)
+.env
+.env.*
+!.env.example
+
+# Datos y artifacts locales (el corpus no se publica; sección 5)
+data/
+artifacts/
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Contexto de proyecto para Claude Code
+CLAUDE.md
+steps.md
+plan.md
+
+# Sistema
+.DS_Store
+Thumbs.db

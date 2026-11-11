@@ -1,0 +1,36 @@
+[project]
+name = "nimbo-sms"
+version = "0.1.0"
+requires-python = ">=3.12"
+description = "Nimbo SMS: clasificación ham/spam de SMS en inglés (examen final PCD 2026)"
+dependencies = []
+
+[dependency-groups]
+api = [
+    "fastapi[standard]>=0.141.1,<0.142",
+    "mlflow-skinny>=3,<4",
+    "pandas>=3.1.1",
+    "python-dotenv>=1.2.4",
+    "scikit-learn>=1.9.1",
+]
+dev = [
+    "ipykernel>=7.4.0",
+    "nbformat>=5.11.1",
+]
+train = [
+    "mlflow>=3,<4",
+    "optuna>=4,<5",
+    "pandas>=3.1.1",
+    "plotly>=7.1.0",
+    "prefect>=3,<4",
+    "python-dotenv>=1.2.4",
+    "scikit-learn>=1.9.1",
+]
+ui = [
+    "requests>=2.34.2",
+    "streamlit>=1.67.0",
+]
+
+[tool.uv]
+# Localmente se instalan todos los grupos; cada imagen Docker instala sólo el suyo.
+default-groups = "all"
