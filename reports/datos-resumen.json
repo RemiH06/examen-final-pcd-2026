@@ -1,0 +1,71 @@
+{
+  "fuente": {
+    "nombre": "SMS Spam Collection (UCI)",
+    "autores": "Almeida e Hidalgo (2011)",
+    "doi": "10.24432/C5CC84",
+    "licencia": "CC BY 4.0",
+    "url": "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip"
+  },
+  "descarga": {
+    "url": "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip",
+    "fecha_utc": "2026-11-10T19:58:51+00:00",
+    "sha256_corpus": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d"
+  },
+  "depuracion": {
+    "registros_leidos": 5574,
+    "por_etiqueta_leidos": {
+      "ham": 4827,
+      "spam": 747
+    },
+    "textos_vacios_eliminados": 0,
+    "claves_contradictorias": 0,
+    "filas_contradictorias_eliminadas": 0,
+    "duplicados_eliminados": 415,
+    "duplicados_por_etiqueta": {
+      "ham": 310,
+      "spam": 105
+    },
+    "registros_limpios": 5159,
+    "por_etiqueta_limpios": {
+      "ham": 4517,
+      "spam": 642
+    }
+  },
+  "particiones": {
+    "semilla": 42,
+    "proporciones": {
+      "train": 0.6,
+      "validation": 0.2,
+      "test": 0.2
+    },
+    "tamanos": {
+      "train": 3095,
+      "validation": 1032,
+      "test": 1032
+    },
+    "por_etiqueta": {
+      "train": {
+        "ham": 2710,
+        "spam": 385
+      },
+      "validation": {
+        "ham": 903,
+        "spam": 129
+      },
+      "test": {
+        "ham": 904,
+        "spam": 128
+      }
+    },
+    "proporcion_spam": {
+      "train": 0.1244,
+      "validation": 0.125,
+      "test": 0.124
+    },
+    "claves_compartidas": {
+      "train&validation": 0,
+      "train&test": 0,
+      "validation&test": 0
+    }
+  }
+}
