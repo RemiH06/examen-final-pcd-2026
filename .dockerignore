@@ -1,0 +1,17 @@
+# Nada de secretos, historial, ambientes ni datos en el contexto de build
+.git/
+.venv/
+.env
+.env.*
+data/
+artifacts/
+mlruns/
+mlartifacts/
+reports/
+**/__pycache__/
+**/*.py[cod]
+.ipynb_checkpoints/
+*.ipynb
+CLAUDE.md
+steps.md
+plan.md

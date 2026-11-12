@@ -1,0 +1,7 @@
+conjunto,familia,alias,configuracion,accuracy,precision_spam,recall_spam,f1_spam,experimento,run_id,version_modelo
+validation,baseline,,"{""strategy"": ""most_frequent""}",0.875,0.0,0.0,0.0,/Shared/pcd-2026-examen-sms-remih06,4320fbd5f307457a9bb507130aeef5e2,
+validation,multinomial_nb,champion,"{""alpha"": 0.061442602442723405, ""fit_prior"": true, ""min_df"": 2, ""ngram_max"": 2, ""sublinear_tf"": false}",0.9864,0.9832,0.907,0.9435,/Shared/pcd-2026-examen-sms-remih06,0e2a047bdf1a4fdb9e342444055ff83b,
+validation,logistic_regression,challenger,"{""C"": 96.83345325290557, ""class_weight"": null, ""min_df"": 2, ""ngram_max"": 2, ""sublinear_tf"": false}",0.9855,0.975,0.907,0.9398,/Shared/pcd-2026-examen-sms-remih06,7cf02c65ad334ad495a5fa0266b37867,
+test,baseline,,"{""strategy"": ""most_frequent""}",0.876,0.0,0.0,0.0,/Shared/pcd-2026-examen-sms-remih06,517148473028484b9f7e77c366a4e0d1,
+test,multinomial_nb,champion,"{""alpha"": 0.061442602442723405, ""fit_prior"": true, ""min_df"": 2, ""ngram_max"": 2, ""sublinear_tf"": false}",0.9874,0.9832,0.9141,0.9474,/Shared/pcd-2026-examen-sms-remih06,895a60be7d434f29ad1fafd8a3045cf4,1
+test,logistic_regression,challenger,"{""C"": 96.83345325290557, ""class_weight"": null, ""min_df"": 2, ""ngram_max"": 2, ""sublinear_tf"": false}",0.9913,0.9917,0.9375,0.9639,/Shared/pcd-2026-examen-sms-remih06,4989193707b54c76b3c7461261d952e0,2
